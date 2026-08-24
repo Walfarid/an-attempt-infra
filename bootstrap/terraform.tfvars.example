@@ -1,0 +1,7 @@
+# One-time values for bootstrapping remote state. Delete this file after use.
+
+# Tenancy/root or management compartment OCID (Console > Profile icon > Tenancy).
+compartment_id = "ocid1.tenancy.oc1..REPLACE_ME"
+
+# Your user OCID (Console > Profile icon > User settings).
+user_ocid = "ocid1.user.oc1..REPLACE_ME"

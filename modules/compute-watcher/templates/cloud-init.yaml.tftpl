@@ -1,0 +1,30 @@
+#cloud-config
+package_update: true
+
+packages:
+  - curl
+
+write_files:
+  - path: /opt/uptime-kuma/docker-compose.yml
+    permissions: '0644'
+    owner: root:root
+    content: |
+      services:
+        uptime-kuma:
+          image: louislam/uptime-kuma:1
+          container_name: uptime-kuma
+          restart: unless-stopped
+          # Loopback only: reach the UI through `ssh -L 3001:127.0.0.1:3001 ubuntu@<ip>`.
+          ports:
+            - "127.0.0.1:3001:3001"
+          volumes:
+            - ./data:/app/data
+
+runcmd:
+  - command -v docker >/dev/null 2>&1 || curl -fsSL https://get.docker.com | sh
+  - systemctl enable --now docker
+  - usermod -aG docker ubuntu || true
+  - mkdir -p /opt/uptime-kuma/data && chown -R ubuntu:ubuntu /opt/uptime-kuma
+  - cd /opt/uptime-kuma && docker compose up -d
+
+final_message: "walfa watcher ready after $${UPTIME} seconds (Uptime-Kuma on 127.0.0.1:3001)"

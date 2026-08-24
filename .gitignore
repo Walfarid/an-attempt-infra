@@ -1,0 +1,22 @@
+# Terraform
+.terraform/
+.terraform.*/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+override.tf
+override.tf.json
+
+# Local values - never commit real ones
+terraform.tfvars
+*.auto.tfvars
+backend.config.hcl
+
+# Generated secrets and rendered files
+generated/
+*.pem
+.env
+
+# OS noise
+.DS_Store

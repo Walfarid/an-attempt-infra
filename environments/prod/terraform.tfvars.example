@@ -1,0 +1,29 @@
+# Copy to terraform.tfvars and fill in before running terraform plan/apply.
+# terraform.tfvars is git-ignored.
+
+project          = "walfa"
+environment      = "prod"
+compartment_name = "walfa-prod"
+region           = "ap-singapore-1"
+
+# REQUIRED: your IAM user (Console > Profile icon > User settings).
+iam_user_ocid = "ocid1.user.oc1..REPLACE_ME"
+iam_username  = "you@example.com"
+
+# REQUIRED: restrict SSH to your own addresses.
+ssh_allowed_cidrs = ["203.0.113.4/32"]
+
+# REQUIRED: paste your public key(s).
+app_ssh_public_keys     = ["ssh-ed25519 AAAA... you@laptop"]
+watcher_ssh_public_keys = ["ssh-ed25519 AAAA... you@laptop"]
+
+# Always Free A1 allowance. Pure Always-Free tenancies are capped at 2 OCPU /
+# 12 GB since 2026-08-18; PAYG tenancies keep the full 4 OCPU / 24 GB free.
+app_ocpus      = 4
+app_memory_gbs = 24
+
+# Higher Performance boot volumes stay within the free tier.
+boot_volume_vpus_per_gb = 20
+
+domain     = "app.example.com"
+acme_email = "you@example.com"
