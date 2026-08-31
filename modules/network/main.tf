@@ -85,19 +85,20 @@ resource "oci_core_security_list" "app_public" {
     }
   }
 
-  dynamic "ingress_security_rules" {
-    for_each = var.ssh_allowed_cidrs
+  # SSH must stay open to GitHub Actions runners: their IP ranges (250+
+  # CIDRs, api.github.com/meta) exceed the security-list rule budget, so the
+  # rule is 0.0.0.0/0 and sshd is key-only (PasswordAuthentication no).
+  # Never re-lock port 22 to a single IP — deploys die with
+  # `dial tcp ...:22: i/o timeout` while the firewall silently drops them.
+  ingress_security_rules {
+    protocol    = local.tcp_protocol
+    source      = "0.0.0.0/0"
+    source_type = "CIDR_BLOCK"
+    description = "SSH from anywhere (GitHub Actions deploys; key-only sshd)"
 
-    content {
-      protocol    = local.tcp_protocol
-      source      = ingress_security_rules.value
-      source_type = "CIDR_BLOCK"
-      description = "SSH from allowed source"
-
-      tcp_options {
-        min = 22
-        max = 22
-      }
+    tcp_options {
+      min = 22
+      max = 22
     }
   }
 
