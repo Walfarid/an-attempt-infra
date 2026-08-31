@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # One-time MySQL bootstrap script.
 #
 # Runs as a systemd oneshot service on the app VM. It waits for the managed
@@ -49,7 +50,7 @@ log "waiting for MySQL at ${DB_HOST}:${DB_PORT:-3306} (up to 40 minutes)"
 reachable=0
 for _ in $(seq 1 240); do
   if mysqladmin ping "${MYSQL_BASE[@]}" --ssl-mode=REQUIRED \
-      --user "${ADMIN_USER}" --password "${ADMIN_PASSWORD}" >/dev/null 2>&1; then
+      --user="${ADMIN_USER}" --password="${ADMIN_PASSWORD}" >/dev/null 2>&1; then
     reachable=1
     break
   fi
@@ -65,7 +66,7 @@ esc() { printf "%s" "${1}" | sed "s/'/''/g"; }
 
 run_sql() {
   mysql "${MYSQL_BASE[@]}" "$@" \
-    --user "${ADMIN_USER}" --password "${ADMIN_PASSWORD}" <<SQL
+    --user="${ADMIN_USER}" --password="${ADMIN_PASSWORD}" <<SQL
 CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE USER IF NOT EXISTS '${APP_USER}'@'%' IDENTIFIED BY '$(esc "${APP_PASSWORD}")';
 ALTER USER '${APP_USER}'@'%' IDENTIFIED BY '$(esc "${APP_PASSWORD}")';
