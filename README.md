@@ -31,8 +31,12 @@ Registry       : sin.ocir.io/<namespace>/walfa-app + auth token
 ```
 
 Security lists: app VM accepts 80/tcp, 443/tcp, 443/udp from anywhere and
-22/tcp only from `ssh_allowed_cidrs`; the watcher accepts nothing but SSH from
-`ssh_allowed_cidrs`; MySQL accepts 3306/tcp only from the app subnet.
+22/tcp from anywhere too — GitHub Actions runners need SSH to deploy, and
+their IP ranges exceed the security-list rule budget, so the app SSH rule
+is pinned to 0.0.0.0/0 and sshd is key-only (never re-lock it to a single
+CIDR or deploys die with `dial tcp ...:22: i/o timeout`). The watcher
+accepts nothing but SSH from `ssh_allowed_cidrs`; MySQL accepts 3306/tcp
+only from the app subnet.
 
 ## Repository layout
 
