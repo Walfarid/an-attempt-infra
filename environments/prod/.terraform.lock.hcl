@@ -3,7 +3,7 @@
 
 provider "registry.terraform.io/hashicorp/local" {
   version     = "2.9.0"
-  constraints = "~> 2.5"
+  constraints = "~> 2.9"
   hashes = [
     "h1:9rBZCMNpxKwMlRbWH2QpwD3kqUCAejdOZQ/aiiDObXQ=",
     "zh:0baa4566cf77f1ff52f4293d1c8536202dd23edc197c3196413a28343c3ac3a0",
@@ -24,7 +24,7 @@ provider "registry.terraform.io/hashicorp/local" {
 
 provider "registry.terraform.io/hashicorp/random" {
   version     = "3.9.0"
-  constraints = "~> 3.7"
+  constraints = "~> 3.9"
   hashes = [
     "h1:UlBuNVuCGJ39tTv2c5gz2NRZnQbXfbIWbTzWcth5o74=",
     "zh:161ad0bd9a75768c82f53fb6e7172a9d8be2d4889b012645a34795031aaf1bf1",
@@ -45,7 +45,7 @@ provider "registry.terraform.io/hashicorp/random" {
 
 provider "registry.terraform.io/oracle/oci" {
   version     = "8.28.0"
-  constraints = "~> 8.23"
+  constraints = "~> 8.28"
   hashes = [
     "h1:hCE5klFfjSYJgDAsudMH4IaASTq+ffdazWSQh45UXaY=",
     "zh:1ddd6f2d589c56d2ee210faf3d9064f6524e179489e55b7dcbb26fcf8d7154fe",
