@@ -2,6 +2,12 @@
 resource "oci_identity_compartment" "this" {
   name        = var.compartment_name
   description = "walfa ${var.environment} infrastructure, managed by Terraform"
+
+  lifecycle {
+    # Destroying the compartment destroys everything inside it (VMs, DB,
+    # buckets, registry).  Require an explicit code change to allow that.
+    prevent_destroy = true
+  }
 }
 
 data "oci_identity_availability_domains" "this" {
@@ -20,29 +26,62 @@ locals {
   s3_endpoint = "https://${module.objectstore.namespace}.compat.objectstorage.${var.region}.oraclecloud.com"
 
   app_image = "${var.ocir_registry}/${module.registry.namespace}/${var.ocir_repository_name}:${var.app_image_tag}"
+
+  # Per-role defined tags using the walfa tag namespace. Keys reference the
+  # namespace resource so Terraform orders creation correctly. The compartment
+  # itself is NOT tagged here: it hosts the namespace, so tagging it with the
+  # namespace's own tags would create a Terraform dependency cycle.
+  tags_network     = { "${oci_identity_tag_namespace.walfa.name}.role" = "network", "${oci_identity_tag_namespace.walfa.name}.cost-center" = var.project }
+  tags_database    = { "${oci_identity_tag_namespace.walfa.name}.role" = "database", "${oci_identity_tag_namespace.walfa.name}.cost-center" = var.project }
+  tags_app         = { "${oci_identity_tag_namespace.walfa.name}.role" = "app", "${oci_identity_tag_namespace.walfa.name}.cost-center" = var.project }
+  tags_watcher     = { "${oci_identity_tag_namespace.walfa.name}.role" = "watcher", "${oci_identity_tag_namespace.walfa.name}.cost-center" = var.project }
+  tags_storage     = { "${oci_identity_tag_namespace.walfa.name}.role" = "storage", "${oci_identity_tag_namespace.walfa.name}.cost-center" = var.project }
+  tags_registry    = { "${oci_identity_tag_namespace.walfa.name}.role" = "registry", "${oci_identity_tag_namespace.walfa.name}.cost-center" = var.project }
+  tags_valkey      = { "${oci_identity_tag_namespace.walfa.name}.role" = "valkey", "${oci_identity_tag_namespace.walfa.name}.cost-center" = var.project }
+}
+
+# Tag namespace and keys for cost allocation and role tracking.
+# Tag namespaces are tenancy-wide; creating it inside the project compartment
+# keeps it co-located with the rest of the stack.
+resource "oci_identity_tag_namespace" "walfa" {
+  compartment_id = oci_identity_compartment.this.id
+  name           = "walfa"
+  description    = "Tag namespace for walfa infrastructure cost allocation and role tracking"
+}
+
+resource "oci_identity_tag" "role" {
+  tag_namespace_id = oci_identity_tag_namespace.walfa.id
+  name             = "role"
+  description      = "Functional role of the resource within the stack"
+}
+
+resource "oci_identity_tag" "cost_center" {
+  tag_namespace_id = oci_identity_tag_namespace.walfa.id
+  name             = "cost-center"
+  description      = "Cost center for billing allocation"
 }
 
 # Strong but shell-safe passwords for MySQL accounts. All four character
 # classes included: OCI rejects purely-alphanumeric admin passwords on some
 # MySQL shapes ("adminPassword ... may not be valid").
 resource "random_password" "db_admin" {
-  length      = 28
-  special     = true
+  length           = 28
+  special          = true
   override_special = "_#%+-"
-  min_upper   = 2
-  min_lower   = 2
-  min_numeric = 2
-  min_special = 2
+  min_upper        = 2
+  min_lower        = 2
+  min_numeric      = 2
+  min_special      = 2
 }
 
 resource "random_password" "db_app" {
-  length      = 28
-  special     = true
+  length           = 28
+  special          = true
   override_special = "_#%+-"
-  min_upper   = 2
-  min_lower   = 2
-  min_numeric = 2
-  min_special = 2
+  min_upper        = 2
+  min_lower        = 2
+  min_numeric      = 2
+  min_special      = 2
 }
 
 module "network" {
