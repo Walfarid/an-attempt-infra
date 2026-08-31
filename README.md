@@ -82,9 +82,7 @@ cp terraform.tfvars.example terraform.tfvars   # fill in the two OCIDs
 terraform init
 terraform apply
 
-# Capture the backend credentials for this shell:
-export AWS_ACCESS_KEY_ID="$(terraform output -raw access_key)"
-export AWS_SECRET_ACCESS_KEY="$(terraform output -raw secret_key)"
+# Note the outputs for Step 2:
 terraform output state_bucket_name   # note it
 terraform output namespace           # note it
 ```
@@ -94,10 +92,13 @@ terraform output namespace           # note it
 ```bash
 cd ../environments/prod
 cp backend.config.hcl.example backend.config.hcl
-#   bucket   = <state_bucket_name>
-#   endpoint = https://<namespace>.compat.objectstorage.ap-singapore-1.oraclecloud.com
+#   bucket    = <state_bucket_name>
+#   namespace = <namespace>
 cp terraform.tfvars.example terraform.tfvars    # REQUIRED fields marked inside
 
+# The native "oci" backend (Terraform >= 1.12) authenticates with the same
+# ~/.oci/config profile as the provider; no extra credentials needed, and
+# state locking is supported.
 terraform init -backend-config=backend.config.hcl
 terraform plan
 terraform apply
