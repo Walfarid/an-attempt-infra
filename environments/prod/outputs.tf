@@ -29,8 +29,8 @@ output "watcher_kuma_tunnel_command" {
 }
 
 output "mysql_hostname" {
-  description = "Managed MySQL hostname (resolves inside the VCN)."
-  value       = module.mysql.hostname
+  description = "Managed MySQL private IP (resolves inside the VCN)."
+  value       = module.mysql.ip_address
 }
 
 output "mysql_admin_username" {

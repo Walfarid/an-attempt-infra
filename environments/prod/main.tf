@@ -84,7 +84,7 @@ module "app_vm" {
 
   ssh_authorized_keys = var.app_ssh_public_keys
 
-  db_host           = module.mysql.hostname
+  db_host           = module.mysql.ip_address
   db_admin_user     = module.mysql.admin_username
   db_admin_password = random_password.db_admin.result
   db_app_user       = var.app_db_user
