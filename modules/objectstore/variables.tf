@@ -36,3 +36,8 @@ variable "credential_display_name" {
   type        = string
   default     = "walfa-s3-compat"
 }
+
+variable "defined_tags" {
+  description = "OCI defined tags applied to every tagged resource."
+  type        = map(string)
+}

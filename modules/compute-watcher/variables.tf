@@ -80,3 +80,8 @@ variable "ssh_authorized_keys" {
     error_message = "At least one SSH public key is required."
   }
 }
+
+variable "defined_tags" {
+  description = "OCI defined tags applied to every tagged resource."
+  type        = map(string)
+}

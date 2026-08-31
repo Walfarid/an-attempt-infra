@@ -41,8 +41,13 @@ resource "oci_core_instance" "watcher" {
   }
 
   freeform_tags = merge(var.tags, { Name = var.display_name })
+  defined_tags  = var.defined_tags
 
   lifecycle {
-    ignore_changes = [metadata["user_data"]]
+    ignore_changes = [
+      metadata["user_data"],
+      metadata["ssh_authorized_keys"],
+    ]
+    prevent_destroy = true
   }
 }

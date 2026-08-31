@@ -47,3 +47,8 @@ variable "auth_token_description" {
   type        = string
   default     = "GitHub Actions deploy for walfa"
 }
+
+variable "defined_tags" {
+  description = "OCI defined tags applied to every tagged resource."
+  type        = map(string)
+}

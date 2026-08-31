@@ -13,9 +13,12 @@ resource "oci_mysql_mysql_db_system" "this" {
   port           = 3306
 
   freeform_tags = merge(var.tags, { Name = var.display_name })
+  defined_tags  = var.defined_tags
 
   lifecycle {
     # Password rotation happens out-of-band (console/SQL); do not churn state.
     ignore_changes = [admin_password]
+    # Accidental deletion loses all data and backups.
+    prevent_destroy = true
   }
 }

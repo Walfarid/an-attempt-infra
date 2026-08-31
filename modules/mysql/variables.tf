@@ -53,3 +53,8 @@ variable "admin_password" {
   type        = string
   sensitive   = true
 }
+
+variable "defined_tags" {
+  description = "OCI defined tags applied to every tagged resource."
+  type        = map(string)
+}

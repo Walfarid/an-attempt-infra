@@ -89,6 +89,7 @@ module "network" {
 
   compartment_id = oci_identity_compartment.this.id
   tags           = local.common_tags
+  defined_tags   = local.tags_network
 
   ssh_allowed_cidrs = var.ssh_allowed_cidrs
 
@@ -104,6 +105,7 @@ module "mysql" {
   availability_domain = local.availability_domain
   subnet_id           = module.network.db_subnet_id
   tags                = local.common_tags
+  defined_tags        = local.tags_database
 
   admin_password = random_password.db_admin.result
 }
@@ -115,6 +117,7 @@ module "app_vm" {
   availability_domain = local.availability_domain
   subnet_id           = module.network.app_subnet_id
   tags                = local.common_tags
+  defined_tags        = local.tags_app
 
   ocpus                   = var.app_ocpus
   memory_in_gbs           = var.app_memory_gbs
@@ -142,6 +145,7 @@ module "watcher_vm" {
   availability_domain = local.availability_domain
   subnet_id           = module.network.watcher_subnet_id
   tags                = local.common_tags
+  defined_tags        = local.tags_watcher
 
   boot_volume_size_gbs    = var.watcher_boot_volume_size_gbs
   boot_volume_vpus_per_gb = var.boot_volume_vpus_per_gb
@@ -157,6 +161,7 @@ module "objectstore" {
   compartment_id = oci_identity_compartment.this.id
   user_id        = var.iam_user_ocid
   tags           = local.common_tags
+  defined_tags   = local.tags_storage
 
   bucket_name = var.media_bucket_name
 }
