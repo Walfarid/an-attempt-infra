@@ -63,11 +63,16 @@ resource "oci_core_instance" "app" {
   }
 
   freeform_tags = merge(var.tags, { Name = var.display_name })
+  defined_tags  = var.defined_tags
 
-  # Re-rendering cloud-init would force instance replacement; treat the VM as
-  # stateful and apply runtime changes manually instead.
+  # Re-rendering cloud-init or rotating SSH keys should not force instance
+  # replacement; treat the VM as stateful and apply runtime changes manually.
   lifecycle {
-    ignore_changes = [metadata["user_data"]]
+    ignore_changes = [
+      metadata["user_data"],
+      metadata["ssh_authorized_keys"],
+    ]
+    prevent_destroy = true
   }
 }
 
@@ -89,4 +94,10 @@ resource "oci_core_public_ip" "app" {
   private_ip_id  = data.oci_core_private_ips.app.private_ips[0].id
 
   freeform_tags = merge(var.tags, { Name = "${var.display_name}-pip" })
+  defined_tags  = var.defined_tags
+
+  lifecycle {
+    # Replacement changes the public IP and breaks the Cloudflare A record.
+    prevent_destroy = true
+  }
 }

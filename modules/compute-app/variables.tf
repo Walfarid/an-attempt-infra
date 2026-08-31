@@ -19,6 +19,12 @@ variable "tags" {
   default     = {}
 }
 
+variable "defined_tags" {
+  description = "OCI defined tags applied to every tagged resource."
+  type        = map(string)
+  default     = {}
+}
+
 variable "display_name" {
   description = "Display name of the instance and its reserved public IP."
   type        = string
