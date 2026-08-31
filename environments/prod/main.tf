@@ -144,7 +144,18 @@ resource "local_sensitive_file" "app_env" {
     domain     = var.domain
     acme_email = var.acme_email
 
-    db_host     = module.mysql.hostname
+    workos_client_id = var.workos_client_id
+    workos_api_key   = var.workos_api_key
+
+    turnstile_site_key   = var.turnstile_site_key
+    turnstile_secret_key = var.turnstile_secret_key
+
+    clarity_project_id  = var.clarity_project_id
+    google_analytics_id = var.google_analytics_id
+
+    app_key = var.app_key
+
+    db_host     = module.mysql.ip_address
     db_port     = tostring(module.mysql.port)
     db_name     = var.app_db_name
     db_user     = var.app_db_user

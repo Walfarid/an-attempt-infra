@@ -212,3 +212,51 @@ variable "acme_email" {
   type        = string
   default     = ""
 }
+
+# Application secrets rendered into the generated .env. Values ship in
+# terraform.tfvars (git-ignored), never in the repo.
+variable "workos_client_id" {
+  description = "WorkOS (AuthKit) OAuth client ID."
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "workos_api_key" {
+  description = "WorkOS (AuthKit) API key."
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "turnstile_site_key" {
+  description = "Cloudflare Turnstile site key."
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "turnstile_secret_key" {
+  description = "Cloudflare Turnstile secret key."
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "clarity_project_id" {
+  description = "Microsoft Clarity project ID for frontend analytics."
+  type        = string
+  default     = ""
+}
+
+variable "google_analytics_id" {
+  description = "Google Analytics 4 measurement ID (G-XXXXXXX)."
+  type        = string
+  default     = ""
+}
+
+variable "app_key" {
+  description = "Laravel APP_KEY. Must be preserved across deploys to avoid invalidating encrypted cookies/sessions."
+  type        = string
+  sensitive   = true
+}

@@ -27,3 +27,14 @@ boot_volume_vpus_per_gb = 20
 
 domain     = "app.example.com"
 acme_email = "you@example.com"
+
+# Application secrets rendered into generated/walfa.env. Fill from your
+# dashboards (WorkOS / Cloudflare Turnstile); terraform.tfvars is git-ignored.
+workos_client_id     = "REPLACE_ME"
+workos_api_key       = "REPLACE_ME"
+turnstile_site_key   = "REPLACE_ME"
+turnstile_secret_key = "REPLACE_ME"
+
+# Analytics — leave empty to disable.
+clarity_project_id  = ""
+google_analytics_id = ""
