@@ -68,3 +68,20 @@ variable "ssh_allowed_cidrs" {
     error_message = "ssh_allowed_cidrs must be a non-empty list of valid IPv4 CIDRs."
   }
 }
+
+variable "valkey_subnet_cidr" {
+  description = "CIDR of the private Valkey subnet."
+  type        = string
+  default     = "10.0.4.0/24"
+
+  validation {
+    condition     = can(cidrnetmask(var.valkey_subnet_cidr))
+    error_message = "valkey_subnet_cidr must be a valid IPv4 CIDR."
+  }
+}
+
+variable "defined_tags" {
+  description = "OCI defined tags applied to every tagged resource."
+  type        = map(string)
+  default     = {}
+}

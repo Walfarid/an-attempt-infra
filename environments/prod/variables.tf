@@ -144,6 +144,18 @@ variable "watcher_enabled" {
   default     = false
 }
 
+variable "valkey_enabled" {
+  description = "Create the dedicated Valkey VM (compute-valkey module). Off by default: Valkey runs on the app VM instead; flip to true to also provision the micro VM when `standard-e2-micro-core-count` quota and host capacity allow."
+  type        = bool
+  default     = false
+}
+
+variable "valkey_availability_domain" {
+  description = "Availability domain for the Valkey VM. Empty uses the stack's default domain; set this to escape 'Out of host capacity' for the micro shape in one domain."
+  type        = string
+  default     = ""
+}
+
 variable "boot_volume_vpus_per_gb" {
   description = "Boot volume performance for both VMs. 10 = Balanced, 20 = Higher Performance (free-tier volumes are not billed per VPU)."
   type        = number

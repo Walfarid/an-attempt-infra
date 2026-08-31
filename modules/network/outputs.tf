@@ -22,3 +22,8 @@ output "db_subnet_id" {
   description = "OCID of the private database subnet."
   value       = oci_core_subnet.db_private.id
 }
+
+output "valkey_subnet_id" {
+  description = "OCID of the private Valkey subnet."
+  value       = oci_core_subnet.valkey_private.id
+}

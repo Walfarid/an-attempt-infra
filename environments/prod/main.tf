@@ -173,14 +173,44 @@ module "registry" {
   user_id        = var.iam_user_ocid
   user_name      = var.iam_username
   tags           = local.common_tags
+  defined_tags   = local.tags_registry
 
   repository_name   = var.ocir_repository_name
   registry_endpoint = var.ocir_registry
   image_tag         = var.app_image_tag
 }
 
-# Rendered production .env: every infra-owned value is filled from real
-# resource attributes; application secrets stay as placeholders.
+# Strong but shell-safe password for Valkey AUTH.
+resource "random_password" "valkey" {
+  length           = 32
+  special          = true
+  override_special = "_#%+-"
+  min_upper        = 2
+  min_lower        = 2
+  min_numeric      = 2
+  min_special      = 2
+}
+
+module "valkey_vm" {
+  count = var.valkey_enabled ? 1 : 0
+
+  source = "../../modules/compute-valkey"
+
+  compartment_id      = oci_identity_compartment.this.id
+  availability_domain = var.valkey_availability_domain != "" ? var.valkey_availability_domain : local.availability_domain
+  subnet_id           = module.network.valkey_subnet_id
+  tags                = local.common_tags
+  defined_tags        = local.tags_valkey
+
+  ssh_authorized_keys = var.watcher_ssh_public_keys
+  valkey_password     = random_password.valkey.result
+
+  depends_on = [module.network]
+}
+
+# Rendered production .env: every value is filled from real resource
+# attributes plus terraform.tfvars (git-ignored), so an apply never blanks
+# the file.
 resource "local_sensitive_file" "app_env" {
   filename = "${path.module}/generated/walfa.env"
   content = templatefile("${path.module}/templates/app.env.tftpl", {

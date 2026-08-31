@@ -11,6 +11,7 @@ resource "oci_core_vcn" "this" {
   dns_label      = "${substr(var.name_prefix, 0, 11)}vcn"
 
   freeform_tags = merge(var.tags, { Name = "${var.name_prefix}-vcn" })
+  defined_tags  = var.defined_tags
 }
 
 resource "oci_core_internet_gateway" "this" {
@@ -20,6 +21,7 @@ resource "oci_core_internet_gateway" "this" {
   enabled        = true
 
   freeform_tags = merge(var.tags, { Name = "${var.name_prefix}-igw" })
+  defined_tags  = var.defined_tags
 }
 
 # Public subnets (app VM + watcher) get a default route through the IGW.
@@ -36,9 +38,11 @@ resource "oci_core_route_table" "public" {
   }
 
   freeform_tags = merge(var.tags, { Name = "${var.name_prefix}-public-rt" })
+  defined_tags  = var.defined_tags
 }
 
 # The private DB subnet has no internet route on purpose; managed MySQL does not need one.
+# The private Valkey subnet also has no internet route.
 
 resource "oci_core_security_list" "app_public" {
   compartment_id = var.compartment_id
@@ -105,6 +109,7 @@ resource "oci_core_security_list" "app_public" {
   }
 
   freeform_tags = merge(var.tags, { Name = "${var.name_prefix}-app-sl" })
+  defined_tags  = var.defined_tags
 }
 
 resource "oci_core_security_list" "watcher_public" {
@@ -136,6 +141,7 @@ resource "oci_core_security_list" "watcher_public" {
   }
 
   freeform_tags = merge(var.tags, { Name = "${var.name_prefix}-watcher-sl" })
+  defined_tags  = var.defined_tags
 }
 
 resource "oci_core_security_list" "db_private" {
@@ -158,6 +164,47 @@ resource "oci_core_security_list" "db_private" {
   # No egress rules: the DB system never initiates outbound connections.
 
   freeform_tags = merge(var.tags, { Name = "${var.name_prefix}-db-sl" })
+  defined_tags  = var.defined_tags
+}
+
+# Valkey private subnet: accessible only from the app subnet.
+resource "oci_core_security_list" "valkey_private" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.this.id
+  display_name   = "${var.name_prefix}-valkey-sl"
+
+  ingress_security_rules {
+    protocol    = local.tcp_protocol
+    source      = var.app_subnet_cidr
+    source_type = "CIDR_BLOCK"
+    description = "Valkey from the app subnet only"
+
+    tcp_options {
+      min = 6379
+      max = 6379
+    }
+  }
+
+  dynamic "ingress_security_rules" {
+    for_each = var.ssh_allowed_cidrs
+
+    content {
+      protocol    = local.tcp_protocol
+      source      = ingress_security_rules.value
+      source_type = "CIDR_BLOCK"
+      description = "SSH from allowed source"
+
+      tcp_options {
+        min = 22
+        max = 22
+      }
+    }
+  }
+
+  # No egress rules: Valkey does not initiate outbound connections.
+
+  freeform_tags = merge(var.tags, { Name = "${var.name_prefix}-valkey-sl" })
+  defined_tags  = var.defined_tags
 }
 
 resource "oci_core_subnet" "app_public" {
@@ -171,6 +218,7 @@ resource "oci_core_subnet" "app_public" {
   prohibit_public_ip_on_vnic = false
 
   freeform_tags = merge(var.tags, { Name = "${var.name_prefix}-app-public" })
+  defined_tags  = var.defined_tags
 }
 
 resource "oci_core_subnet" "db_private" {
@@ -183,6 +231,7 @@ resource "oci_core_subnet" "db_private" {
   prohibit_public_ip_on_vnic = true
 
   freeform_tags = merge(var.tags, { Name = "${var.name_prefix}-db-private" })
+  defined_tags  = var.defined_tags
 }
 
 resource "oci_core_subnet" "watcher_public" {
@@ -196,4 +245,18 @@ resource "oci_core_subnet" "watcher_public" {
   prohibit_public_ip_on_vnic = false
 
   freeform_tags = merge(var.tags, { Name = "${var.name_prefix}-watcher-public" })
+  defined_tags  = var.defined_tags
+}
+
+resource "oci_core_subnet" "valkey_private" {
+  compartment_id             = var.compartment_id
+  vcn_id                     = oci_core_vcn.this.id
+  cidr_block                 = var.valkey_subnet_cidr
+  security_list_ids          = [oci_core_security_list.valkey_private.id]
+  display_name               = "${var.name_prefix}-valkey-private"
+  dns_label                  = "valkey"
+  prohibit_public_ip_on_vnic = true
+
+  freeform_tags = merge(var.tags, { Name = "${var.name_prefix}-valkey-private" })
+  defined_tags  = var.defined_tags
 }
