@@ -13,6 +13,11 @@ resource "oci_objectstorage_bucket" "tfstate" {
     ManagedBy = "terraform"
     Purpose   = "terraform-state"
   }
+
+  lifecycle {
+    # Losing the state bucket means losing all Terraform state for prod.
+    prevent_destroy = true
+  }
 }
 
 # S3-compatible key pair used by the Terraform S3 backend. The secret portion
@@ -20,4 +25,9 @@ resource "oci_objectstorage_bucket" "tfstate" {
 resource "oci_identity_customer_secret_key" "tf_backend" {
   user_id      = var.user_ocid
   display_name = var.credential_display_name
+
+  lifecycle {
+    # Recreating the key invalidates the S3 backend credentials.
+    prevent_destroy = true
+  }
 }
