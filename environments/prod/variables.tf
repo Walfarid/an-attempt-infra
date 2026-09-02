@@ -267,6 +267,30 @@ variable "google_analytics_id" {
   default     = ""
 }
 
+variable "adstxt_content" {
+  description = "Content served at /ads.txt (one line per authorized seller). Empty disables the route."
+  type        = string
+  default     = ""
+}
+
+variable "ezoic_enabled" {
+  description = "Enable Ezoic ads on the single-post page. Turns on the header scripts, the post-page ad slot, and the /ads.txt 301 redirect."
+  type        = bool
+  default     = false
+}
+
+variable "ezoic_placeholder_id" {
+  description = "Ezoic placeholder ID from the dashboard (EzoicAds → Ad Locations → Placeholders). Must match the placement it belongs to."
+  type        = string
+  default     = ""
+}
+
+variable "ezoic_adstxt_manager_id" {
+  description = "Ezoic ads.txt manager ID. Used by the /ads.txt 301 redirect route."
+  type        = string
+  default     = "19390"
+}
+
 variable "app_key" {
   description = "Laravel APP_KEY. Must be preserved across deploys to avoid invalidating encrypted cookies/sessions."
   type        = string

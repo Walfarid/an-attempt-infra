@@ -226,6 +226,11 @@ resource "local_sensitive_file" "app_env" {
 
     clarity_project_id  = var.clarity_project_id
     google_analytics_id = var.google_analytics_id
+    adstxt_content      = var.adstxt_content
+
+    ezoic_enabled           = tostring(var.ezoic_enabled)
+    ezoic_placeholder_id    = var.ezoic_placeholder_id
+    ezoic_adstxt_manager_id = var.ezoic_adstxt_manager_id
 
     app_key = var.app_key
 
@@ -239,7 +244,8 @@ resource "local_sensitive_file" "app_env" {
     s3_bucket     = module.objectstore.bucket_name
     s3_access_key = module.objectstore.access_key
     s3_secret_key = module.objectstore.secret_key
-    region        = var.region
+    region         = var.region
+    aws_public_url = "https://media.${var.domain}"
   })
   file_permission = "0600"
 }
