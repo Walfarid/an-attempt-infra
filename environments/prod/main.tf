@@ -227,6 +227,7 @@ resource "local_sensitive_file" "app_env" {
     clarity_project_id  = var.clarity_project_id
     google_analytics_id = var.google_analytics_id
     adstxt_content      = var.adstxt_content
+    adsense_client_id   = var.adsense_client_id
 
     ezoic_enabled           = tostring(var.ezoic_enabled)
     ezoic_placeholder_id    = var.ezoic_placeholder_id

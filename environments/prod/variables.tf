@@ -273,6 +273,12 @@ variable "adstxt_content" {
   default     = ""
 }
 
+variable "adsense_client_id" {
+  description = "Google AdSense publisher ID (ca-pub-XXXXXXXXXXXXXXXX). Empty disables the AdSense script."
+  type        = string
+  default     = ""
+}
+
 variable "ezoic_enabled" {
   description = "Enable Ezoic ads on the single-post page. Turns on the header scripts, the post-page ad slot, and the /ads.txt 301 redirect."
   type        = bool
