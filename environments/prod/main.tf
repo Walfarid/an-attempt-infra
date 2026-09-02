@@ -228,6 +228,7 @@ resource "local_sensitive_file" "app_env" {
     google_analytics_id = var.google_analytics_id
     adstxt_content      = var.adstxt_content
     adsense_client_id   = var.adsense_client_id
+    adsense_slot_id     = var.adsense_slot_id
 
     ezoic_enabled           = tostring(var.ezoic_enabled)
     ezoic_placeholder_id    = var.ezoic_placeholder_id

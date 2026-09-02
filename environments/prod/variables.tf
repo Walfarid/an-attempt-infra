@@ -279,6 +279,12 @@ variable "adsense_client_id" {
   default     = ""
 }
 
+variable "adsense_slot_id" {
+  description = "Google AdSense ad unit ID (numeric). Empty disables ad slots."
+  type        = string
+  default     = ""
+}
+
 variable "ezoic_enabled" {
   description = "Enable Ezoic ads on the single-post page. Turns on the header scripts, the post-page ad slot, and the /ads.txt 301 redirect."
   type        = bool
