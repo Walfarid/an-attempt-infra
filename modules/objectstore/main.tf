@@ -5,7 +5,7 @@ resource "oci_objectstorage_bucket" "media" {
   namespace      = data.oci_objectstorage_namespace.this.namespace
   name           = var.bucket_name
 
-  access_type  = "NoPublicAccess"
+  access_type  = "ObjectRead"
   storage_tier = "Standard"
   versioning   = var.bucket_versioning ? "Enabled" : "Disabled"
 
